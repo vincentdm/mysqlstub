@@ -12,6 +12,8 @@ AC_PROG_CC
 
 
 LT_INIT
+
+LTDL_INIT
 # Checks for libraries.
 
 # Checks for header files.
@@ -21,6 +23,7 @@ LT_INIT
 # Checks for library functions.
 
 AC_CONFIG_FILES([Makefile
+                 libltdl/Makefile
                  src/Makefile
                  src/include/Makefile])
 AC_OUTPUT
