@@ -1,1 +1,1 @@
-include_HEADERS=mysqlloader.h
+include_HEADERS=mysqlstub.h

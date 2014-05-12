@@ -1,13 +1,13 @@
 SUBDIRS=include
 
-lib_LTLIBRARIES=libmysqlloader.la
+lib_LTLIBRARIES=libmysqlstub.la
 
 AM_CPPFLAGS=-I$(top_srcdir)/src/include
 
 AM_CFLAGS=
 
-libmysqlloader_la_SOURCES=mysqlloader.c
+libmysqlstub_la_SOURCES=mysqlstub.c
 
-libmysqlloader_la_LDFLAGS=$(LIBLTDL)
+libmysqlstub_la_LDFLAGS=$(LIBLTDL)
 
-libmysqlloader_la_LIBADD=
+libmysqlstub_la_LIBADD=
