@@ -375,40 +375,40 @@ int mysqlstub_init_stub() {
 			mysqlstub_read_query_result_ptr = lt_dlsym(module,"mysql_read_query_result");
 
 
-			mysqlstub_stmt_init_ptr = NULL;
-			mysqlstub_stmt_prepare_ptr = NULL;
-			mysqlstub_stmt_execute_ptr = NULL;
-			mysqlstub_stmt_fetch_ptr = NULL;
-			mysqlstub_stmt_fetch_column_ptr = NULL;
-			mysqlstub_stmt_store_result_ptr = NULL;
-			mysqlstub_stmt_param_count_ptr = NULL;
-			mysqlstub_stmt_attr_set_ptr = NULL;
-			mysqlstub_stmt_attr_get_ptr = NULL;
-			mysqlstub_stmt_bind_param_ptr = NULL;
-			mysqlstub_stmt_bind_result_ptr = NULL;
-			mysqlstub_stmt_close_ptr = NULL;
-			mysqlstub_stmt_reset_ptr = NULL;
-			mysqlstub_stmt_free_result_ptr = NULL;
-			mysqlstub_stmt_send_long_data_ptr = NULL;
-			mysqlstub_stmt_param_metadata_ptr = NULL;
-			mysqlstub_stmt_errno_ptr = NULL;
-			mysqlstub_stmt_error_ptr = NULL;
-			mysqlstub_stmt_sqlstate_ptr = NULL;
-			mysqlstub_stmt_row_seek_ptr = NULL;
-			mysqlstub_stmt_row_tell_ptr = NULL;
-			mysqlstub_stmt_data_seek_ptr = NULL;
-			mysqlstub_stmt_num_rows_ptr = NULL;
-			mysqlstub_stmt_affected_rows_ptr = NULL;
-			mysqlstub_stmt_insert_id_ptr = NULL;
-			mysqlstub_stmt_field_count_ptr = NULL;
+			mysqlstub_stmt_init_ptr = lt_dlsym(module,"mysql_stmt_init");
+			mysqlstub_stmt_prepare_ptr = lt_dlsym(module,"mysql_stmt_prepare");
+			mysqlstub_stmt_execute_ptr = lt_dlsym(module,"mysql_stmt_execute");
+			mysqlstub_stmt_fetch_ptr = lt_dlsym(module,"mysql_stmt_fetch");
+			mysqlstub_stmt_fetch_column_ptr = lt_dlsym(module,"mysql_stmt_fetch_column");
+			mysqlstub_stmt_store_result_ptr = lt_dlsym(module,"mysql_stmt_store_result");
+			mysqlstub_stmt_param_count_ptr = lt_dlsym(module,"mysql_stmt_param_count");
+			mysqlstub_stmt_attr_set_ptr = lt_dlsym(module,"mysql_stmt_attr_set");
+			mysqlstub_stmt_attr_get_ptr = lt_dlsym(module,"mysql_stmt_attr_get");
+			mysqlstub_stmt_bind_param_ptr = lt_dlsym(module,"mysql_stmt_bind_param");
+			mysqlstub_stmt_bind_result_ptr = lt_dlsym(module,"mysql_stmt_bind_result");
+			mysqlstub_stmt_close_ptr = lt_dlsym(module,"mysql_stmt_close");
+			mysqlstub_stmt_reset_ptr = lt_dlsym(module,"mysql_stmt_reset");
+			mysqlstub_stmt_free_result_ptr = lt_dlsym(module,"mysql_stmt_free_result");
+			mysqlstub_stmt_send_long_data_ptr = lt_dlsym(module,"mysql_stmt_send_long_data");
+			mysqlstub_stmt_param_metadata_ptr = lt_dlsym(module,"mysql_stmt_param_metadata");
+			mysqlstub_stmt_errno_ptr = lt_dlsym(module,"mysql_stmt_errno");
+			mysqlstub_stmt_error_ptr = lt_dlsym(module,"mysql_stmt_error");
+			mysqlstub_stmt_sqlstate_ptr = lt_dlsym(module,"mysql_stmt_sqlstate");
+			mysqlstub_stmt_row_seek_ptr = lt_dlsym(module,"mysql_stmt_row_seek");
+			mysqlstub_stmt_row_tell_ptr = lt_dlsym(module,"mysql_stmt_row_tell");
+			mysqlstub_stmt_data_seek_ptr = lt_dlsym(module,"mysql_stmt_data_seek");
+			mysqlstub_stmt_num_rows_ptr = lt_dlsym(module,"mysql_stmt_num_rows");
+			mysqlstub_stmt_affected_rows_ptr = lt_dlsym(module,"mysql_stmt_affected_rows");
+			mysqlstub_stmt_insert_id_ptr = lt_dlsym(module,"mysql_stmt_insert_id");
+			mysqlstub_stmt_field_count_ptr = lt_dlsym(module,"mysql_stmt_field_count");
 
-			mysqlstub_commit_ptr = NULL;
-			mysqlstub_rollback_ptr = NULL;
-			mysqlstub_autocommit_ptr = NULL;
-			mysqlstub_more_results_ptr = NULL;
-			mysqlstub_next_result_ptr = NULL;
-			mysqlstub_stmt_next_result_ptr = NULL;
-			mysqlstub_close_ptr = NULL;
+			mysqlstub_commit_ptr = lt_dlsym(module,"mysql_commit");
+			mysqlstub_rollback_ptr = lt_dlsym(module,"mysql_rollback");
+			mysqlstub_autocommit_ptr = lt_dlsym(module,"mysql_autocommit");
+			mysqlstub_more_results_ptr = lt_dlsym(module,"mysql_more_results");
+			mysqlstub_next_result_ptr = lt_dlsym(module,"mysql_next_result");
+			mysqlstub_stmt_next_result_ptr = lt_dlsym(module,"mysql_stmt_next_result");
+			mysqlstub_close_ptr = lt_dlsym(module,"mysql_close_ptr");
 
 		}
 
@@ -450,30 +450,40 @@ int  mysqlstub_server_init(int argc, char **argv, char **groups){
 
 
 void  mysqlstub_server_end(void){
-
+	if(mysqlstub_server_end_ptr != NULL)
+		return (*mysqlstub_server_end_ptr)();
+	abort();
 }
 
 
 MYSQL_PARAMETERS * mysqlstub_get_parameters(void){
-
+	if(mysqlstub_get_parameters_ptr != NULL)
+		return (*mysqlstub_get_parameters_ptr)();
+	abort();
 }
 
 
 
 my_bool  mysqlstub_thread_init(void){
-
+	if(mysqlstub_thread_init_ptr != NULL)
+		return (*mysqlstub_thread_init_ptr)();
+	abort();
 }
 
 
 void  mysqlstub_thread_end(void){
-
+	if(mysqlstub_thread_end_ptr != NULL)
+		return (*mysqlstub_thread_end_ptr)();
+	abort();
 }
 
 
 
 
 my_ulonglong  mysqlstub_num_rows(MYSQL_RES *res){
-
+	if(mysqlstub_num_rows_ptr != NULL)
+		return (*mysqlstub_num_rows_ptr)(res);
+	abort();
 }
 
 
