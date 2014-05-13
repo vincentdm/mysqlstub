@@ -1,166 +1,16 @@
-#include "mysqlstub.h"
-
+#include "mysqlstub_private.h"
+#include "config.h"
 #include "ltdl.h"
+
 
 static int mysqlstub_inited = 0;
 static int ltdl=0;
 static lt_dlhandle module;
 
 
-typedef int  (*mysqlstub_server_init_t)(int argc, char **argv, char **groups);
-typedef void  (*mysqlstub_server_end_t)(void);
-
-
-typedef MYSQL_PARAMETERS * (*mysqlstub_get_parameters_t)(void);
-
-typedef my_bool  (*mysqlstub_thread_init_t)(void);
-typedef void  (*mysqlstub_thread_end_t)(void);
-
-
-typedef my_ulonglong  (*mysqlstub_num_rows_t)(MYSQL_RES *res);
-typedef unsigned int  (*mysqlstub_num_fields_t)(MYSQL_RES *res);
-typedef my_bool  (*mysqlstub_eof_t)(MYSQL_RES *res);
-typedef MYSQL_FIELD * (*mysqlstub_fetch_field_direct_t)(MYSQL_RES *res,
-		unsigned int fieldnr);
-typedef MYSQL_FIELD *  (*mysqlstub_fetch_fields_t)(MYSQL_RES *res);
-typedef MYSQL_ROW_OFFSET  (*mysqlstub_row_tell_t)(MYSQL_RES *res);
-typedef MYSQL_FIELD_OFFSET  (*mysqlstub_field_tell_t)(MYSQL_RES *res);
-
-typedef unsigned int  (*mysqlstub_field_count_t)(MYSQL *mysql);
-typedef my_ulonglong  (*mysqlstub_affected_rows_t)(MYSQL *mysql);
-typedef my_ulonglong  (*mysqlstub_insert_id_t)(MYSQL *mysql);
-typedef unsigned int  (*mysqlstub_errno_t)(MYSQL *mysql);
-typedef const char *  (*mysqlstub_error_t)(MYSQL *mysql);
-typedef const char * (*mysqlstub_sqlstate_t)(MYSQL *mysql);
-typedef unsigned int  (*mysqlstub_warning_count_t)(MYSQL *mysql);
-typedef const char *  (*mysqlstub_info_t)(MYSQL *mysql);
-typedef unsigned long  (*mysqlstub_thread_id_t)(MYSQL *mysql);
-typedef const char *  (*mysqlstub_character_set_name_t)(MYSQL *mysql);
-typedef int           (*mysqlstub_set_character_set_t)(MYSQL *mysql, const char *csname);
-
-typedef MYSQL *		 (*mysqlstub_init_t)(MYSQL *mysql);
-typedef my_bool		 (*mysqlstub_ssl_set_t)(MYSQL *mysql, const char *key,
-		const char *cert, const char *ca,
-		const char *capath, const char *cipher);
-typedef const char *     (*mysqlstub_get_ssl_cipher_t)(MYSQL *mysql);
-typedef my_bool		 (*mysqlstub_change_user_t)(MYSQL *mysql, const char *user,
-		const char *passwd, const char *db);
-typedef MYSQL *		 (*mysqlstub_real_connect_t)(MYSQL *mysql, const char *host,
-		const char *user,
-		const char *passwd,
-		const char *db,
-		unsigned int port,
-		const char *unix_socket,
-		unsigned long clientflag);
-typedef int		 (*mysqlstub_select_db_t)(MYSQL *mysql, const char *db);
-typedef int		 (*mysqlstub_query_t)(MYSQL *mysql, const char *q);
-typedef int		 (*mysqlstub_send_query_t)(MYSQL *mysql, const char *q,
-		unsigned long length);
-typedef int		 (*mysqlstub_real_query_t)(MYSQL *mysql, const char *q,
-		unsigned long length);
-typedef MYSQL_RES *      (*mysqlstub_store_result_t)(MYSQL *mysql);
-typedef MYSQL_RES *      (*mysqlstub_use_result_t)(MYSQL *mysql);
-
-typedef void         (*mysqlstub_get_character_set_info_t)(MYSQL *mysql,
-		MY_CHARSET_INFO *charset);
-
-
-
-typedef int		 (*mysqlstub_shutdown_t)(MYSQL *mysql,
-		enum mysql_enum_shutdown_level
-		shutdown_level);
-typedef int		 (*mysqlstub_dump_debug_info_t)(MYSQL *mysql);
-typedef int		 (*mysqlstub_refresh_t)(MYSQL *mysql,
-		unsigned int refresh_options);
-typedef int		 (*mysqlstub_kill_t)(MYSQL *mysql,unsigned long pid);
-typedef int		 (*mysqlstub_set_server_option_t)(MYSQL *mysql,
-		enum enum_mysql_set_option
-		option);
-typedef int		 (*mysqlstub_ping_t)(MYSQL *mysql);
-typedef const char *	 (*mysqlstub_stat_t)(MYSQL *mysql);
-typedef const char *	 (*mysqlstub_get_server_info_t)(MYSQL *mysql);
-typedef const char *	 (*mysqlstub_get_client_info_t)(void);
-typedef unsigned long	 (*mysqlstub_get_client_version_t)(void);
-typedef const char *	 (*mysqlstub_get_host_info_t)(MYSQL *mysql);
-typedef unsigned long	 (*mysqlstub_get_server_version_t)(MYSQL *mysql);
-typedef unsigned int	 (*mysqlstub_get_proto_info_t)(MYSQL *mysql);
-typedef MYSQL_RES *	 (*mysqlstub_list_dbs_t)(MYSQL *mysql,const char *wild);
-typedef MYSQL_RES *	 (*mysqlstub_list_tables_t)(MYSQL *mysql,const char *wild);
-typedef MYSQL_RES *	 (*mysqlstub_list_processes_t)(MYSQL *mysql);
-typedef int		 (*mysqlstub_options_t)(MYSQL *mysql,enum mysql_option option,
-		const void *arg);
-typedef void		 (*mysqlstub_free_result_t)(MYSQL_RES *result);
-typedef void		 (*mysqlstub_data_seek_t)(MYSQL_RES *result,
-		my_ulonglong offset);
-typedef MYSQL_ROW_OFFSET  (*mysqlstub_row_seek_t)(MYSQL_RES *result,
-		MYSQL_ROW_OFFSET offset);
-typedef MYSQL_FIELD_OFFSET  (*mysqlstub_field_seek_t)(MYSQL_RES *result,
-		MYSQL_FIELD_OFFSET offset);
-typedef MYSQL_ROW	 (*mysqlstub_fetch_row_t)(MYSQL_RES *result);
-typedef unsigned long *  (*mysqlstub_fetch_lengths_t)(MYSQL_RES *result);
-typedef MYSQL_FIELD *	 (*mysqlstub_fetch_field_t)(MYSQL_RES *result);
-typedef MYSQL_RES *      (*mysqlstub_list_fields_t)(MYSQL *mysql, const char *table,
-		const char *wild);
-typedef unsigned long	 (*mysqlstub_escape_string_t)(char *to,const char *from,
-		unsigned long from_length);
-typedef unsigned long	 (*mysqlstub_hex_string_t)(char *to,const char *from,
-		unsigned long from_length);
-typedef unsigned long  (*mysqlstub_real_escape_string_t)(MYSQL *mysql,
-		char *to,const char *from,
-		unsigned long length);
-typedef void		 (*mysqlstub_debug_t)(const char *debug);
-typedef unsigned int	 (*mysqlstub_thread_safe_t)(void);
-typedef my_bool		 (*mysqlstub_embedded_t)(void);
-typedef my_bool         (* mysqlstub_read_query_result_t)(MYSQL *mysql);
-
-
-typedef MYSQL_STMT *  (*mysqlstub_stmt_init_t)(MYSQL *mysql);
-typedef int  (*mysqlstub_stmt_prepare_t)(MYSQL_STMT *stmt, const char *query,
-		unsigned long length);
-typedef int  (*mysqlstub_stmt_execute_t)(MYSQL_STMT *stmt);
-typedef int  (*mysqlstub_stmt_fetch_t)(MYSQL_STMT *stmt);
-typedef int  (*mysqlstub_stmt_fetch_column_t)(MYSQL_STMT *stmt, MYSQL_BIND *bind_arg,
-		unsigned int column,
-		unsigned long offset);
-typedef int  (*mysqlstub_stmt_store_result_t)(MYSQL_STMT *stmt);
-typedef unsigned long  (*mysqlstub_stmt_param_count_t)(MYSQL_STMT * stmt);
-typedef my_bool  (*mysqlstub_stmt_attr_set_t)(MYSQL_STMT *stmt,
-		enum enum_stmt_attr_type attr_type,
-		const void *attr);
-typedef my_bool  (*mysqlstub_stmt_attr_get_t)(MYSQL_STMT *stmt,
-		enum enum_stmt_attr_type attr_type,
-		void *attr);
-typedef my_bool  (*mysqlstub_stmt_bind_param_t)(MYSQL_STMT * stmt, MYSQL_BIND * bnd);
-typedef my_bool  (*mysqlstub_stmt_bind_result_t)(MYSQL_STMT * stmt, MYSQL_BIND * bnd);
-typedef my_bool  (*mysqlstub_stmt_close_t)(MYSQL_STMT * stmt);
-typedef my_bool  (*mysqlstub_stmt_reset_t)(MYSQL_STMT * stmt);
-typedef my_bool  (*mysqlstub_stmt_free_result_t)(MYSQL_STMT *stmt);
-typedef my_bool  (*mysqlstub_stmt_send_long_data_t)(MYSQL_STMT *stmt,
-		unsigned int param_number,
-		const char *data,
-		unsigned long length);
-typedef MYSQL_RES * (*mysqlstub_stmt_result_metadata_t)(MYSQL_STMT *stmt);
-typedef MYSQL_RES * (*mysqlstub_stmt_param_metadata_t)(MYSQL_STMT *stmt);
-typedef unsigned int  (*mysqlstub_stmt_errno_t)(MYSQL_STMT * stmt);
-typedef const char * (*mysqlstub_stmt_error_t)(MYSQL_STMT * stmt);
-typedef const char * (*mysqlstub_stmt_sqlstate_t)(MYSQL_STMT * stmt);
-typedef MYSQL_ROW_OFFSET  (*mysqlstub_stmt_row_seek_t)(MYSQL_STMT *stmt,
-		MYSQL_ROW_OFFSET offset);
-typedef MYSQL_ROW_OFFSET  (*mysqlstub_stmt_row_tell_t)(MYSQL_STMT *stmt);
-typedef void  (*mysqlstub_stmt_data_seek_t)(MYSQL_STMT *stmt, my_ulonglong offset);
-typedef my_ulonglong  (*mysqlstub_stmt_num_rows_t)(MYSQL_STMT *stmt);
-typedef my_ulonglong  (*mysqlstub_stmt_affected_rows_t)(MYSQL_STMT *stmt);
-typedef my_ulonglong  (*mysqlstub_stmt_insert_id_t)(MYSQL_STMT *stmt);
-typedef unsigned int  (*mysqlstub_stmt_field_count_t)(MYSQL_STMT *stmt);
-
-typedef my_bool  (*mysqlstub_commit_t)(MYSQL * mysql);
-typedef my_bool  (*mysqlstub_rollback_t)(MYSQL * mysql);
-typedef my_bool  (*mysqlstub_autocommit_t)(MYSQL * mysql, my_bool auto_mode);
-typedef my_bool  (*mysqlstub_more_results_t)(MYSQL *mysql);
-typedef int  (*mysqlstub_next_result_t)(MYSQL *mysql);
-typedef int  (*mysqlstub_stmt_next_result_t)(MYSQL_STMT *stmt);
-typedef void  (*mysqlstub_close_t)(MYSQL *sock);
-
+const char * mysqlstub_get_stub_version() {
+	return PACKAGE_VERSION;
+}
 
 
 static mysqlstub_server_init_t * mysqlstub_server_init_ptr = NULL;
@@ -488,94 +338,140 @@ my_ulonglong  mysqlstub_num_rows(MYSQL_RES *res){
 
 
 unsigned int  mysqlstub_num_fields(MYSQL_RES *res){
-
+	if(mysqlstub_num_fields_ptr != NULL)
+		return (*mysqlstub_num_fields_ptr)(res);
+	abort();
 }
 
 
 my_bool  mysqlstub_eof(MYSQL_RES *res){
-
+	if(mysqlstub_eof_ptr != NULL)
+		return (*mysqlstub_eof_ptr)(res);
+	abort();
 }
 
 
 MYSQL_FIELD * mysqlstub_fetch_field_direct(MYSQL_RES *res,
 		unsigned int fieldnr){
-
+	if(mysqlstub_fetch_field_ptr != NULL)
+		return (*mysqlstub_fetch_field_direct_ptr)(res,fieldnr);
+	abort();
 }
 
 
 MYSQL_FIELD *  mysqlstub_fetch_fields(MYSQL_RES *res){
-
+	if(mysqlstub_fetch_fields_ptr != NULL)
+		return (*mysqlstub_fetch_fields_ptr)(res);
+	abort();
 }
 
 
 MYSQL_ROW_OFFSET  mysqlstub_row_tell(MYSQL_RES *res){
-
+	if(mysqlstub_row_tell_ptr != NULL)
+		return (*mysqlstub_row_tell_ptr)(res);
+	abort();
 }
 
 
 MYSQL_FIELD_OFFSET  mysqlstub_field_tell(MYSQL_RES *res){
-
+	if(mysqlstub_field_tell_ptr != NULL)
+		return (*mysqlstub_field_tell_ptr)(res);
+	abort();
 }
 
 
 
 unsigned int  mysqlstub_field_count(MYSQL *mysql){
-
+	if(mysqlstub_field_count_ptr != NULL)
+		return (*mysqlstub_field_count_ptr)(mysql);
+	abort();
 }
 
 
 my_ulonglong  mysqlstub_affected_rows(MYSQL *mysql){
-
+	if(mysqlstub_affected_rows_ptr != NULL)
+		return (*mysqlstub_affected_rows_ptr)(mysql);
+	abort();
 }
 
 
 my_ulonglong  mysqlstub_insert_id(MYSQL *mysql){
+	if(mysqlstub_insert_id_ptr != NULL)
+		return (*mysqlstub_insert_id_ptr)(mysql);
+	abort();
 
 }
 
 
 unsigned int  mysqlstub_errno(MYSQL *mysql){
+	if(mysqlstub_errno_ptr != NULL)
+		return (*mysqlstub_errno_ptr)(mysql);
+	abort();
 
 }
 
 
 const char *  mysqlstub_error(MYSQL *mysql){
+	if(mysqlstub_error_ptr != NULL)
+		return (*mysqlstub_error_ptr)(mysql);
+	abort();
 
 }
 
 
 const char * mysqlstub_sqlstate(MYSQL *mysql){
+	if(mysqlstub_sqlstate_ptr != NULL)
+		return (*mysqlstub_sqlstate_ptr)(mysql);
+	abort();
 
 }
 
 
 unsigned int  mysqlstub_warning_count(MYSQL *mysql){
+	if(mysqlstub_warning_count_ptr != NULL)
+		return (*mysqlstub_warning_count_ptr)(mysql);
+	abort();
 
 }
 
 
 const char *  mysqlstub_info(MYSQL *mysql){
+	if(mysqlstub_info_ptr != NULL)
+		return (*mysqlstub_info_ptr)(mysql);
+	abort();
 
 }
 
 
 unsigned long  mysqlstub_thread_id(MYSQL *mysql){
+	if(mysqlstub_thread_id_ptr != NULL)
+		return (*mysqlstub_thread_id_ptr)(mysql);
+	abort();
 
 }
 
 
 const char *  mysqlstub_character_set_name(MYSQL *mysql){
+	if(mysqlstub_character_set_name_ptr != NULL)
+		return (*mysqlstub_character_set_name_ptr)(mysql);
+	abort();
 
 }
 
 
 int           mysqlstub_set_character_set(MYSQL *mysql, const char *csname){
+	if(mysqlstub_set_character_set_ptr != NULL)
+		return (*mysqlstub_set_character_set_ptr)(mysql,csname);
+	abort();
 
 }
 
 
 
 MYSQL *		 mysqlstub_init(MYSQL *mysql){
+	if(mysqlstub_init_ptr != NULL)
+		return (*mysqlstub_init_ptr)(mysql);
+	abort();
 
 }
 
@@ -583,17 +479,26 @@ MYSQL *		 mysqlstub_init(MYSQL *mysql){
 my_bool		 mysqlstub_ssl_set(MYSQL *mysql, const char *key,
 		const char *cert, const char *ca,
 		const char *capath, const char *cipher){
+	if(mysqlstub_ssl_set_ptr != NULL)
+		return (*mysqlstub_ssl_set_ptr)(mysql, key,cert, ca, capath, cipher);
+	abort();
 
 }
 
 
 const char *     mysqlstub_get_ssl_cipher(MYSQL *mysql){
+	if(mysqlstub_get_ssl_cipher_ptr != NULL)
+		return (*mysqlstub_get_ssl_cipher_ptr)(mysql);
+	abort();
 
 }
 
 
 my_bool		 mysqlstub_change_user(MYSQL *mysql, const char *user,
 		const char *passwd, const char *db){
+	if(mysqlstub_change_user_ptr != NULL)
+		return (*mysqlstub_change_user_ptr)(mysql,user,passwd,db);
+	abort();
 
 }
 
@@ -605,38 +510,59 @@ MYSQL *		 mysqlstub_real_connect(MYSQL *mysql, const char *host,
 		unsigned int port,
 		const char *unix_socket,
 		unsigned long clientflag){
+	if(mysqlstub_real_connect_ptr != NULL)
+		return (*mysqlstub_real_connect_ptr)(mysql,host,user,passwd,db,port,unix_socket,clientflag);
+	abort();
 
 }
 
 
 int		 mysqlstub_select_db(MYSQL *mysql, const char *db){
+	if(mysqlstub_select_db_ptr!= NULL)
+		return (*mysqlstub_select_db_ptr)(mysql,db);
+	abort();
 
 }
 
 
 int		 mysqlstub_query(MYSQL *mysql, const char *q){
+	if(mysqlstub_query_ptr != NULL)
+		return (*mysqlstub_query_ptr)(mysql,q);
+	abort();
 
 }
 
 
 int		 mysqlstub_send_query(MYSQL *mysql, const char *q,
 		unsigned long length){
+	if(mysqlstub_send_query_ptr != NULL)
+		return (*mysqlstub_send_query)(mysql,q,length);
+	abort();
 
 }
 
 
 int		 mysqlstub_real_query(MYSQL *mysql, const char *q,
 		unsigned long length){
+	if(mysqlstub_real_query_ptr != NULL)
+		return (*mysqlstub_real_query)(mysql,q,length);
+	abort();
 
 }
 
 
 MYSQL_RES *      mysqlstub_store_result(MYSQL *mysql){
+	if(mysqlstub_store_result_ptr != NULL)
+		return (*mysqlstub_store_result_ptr)(mysql);
+	abort();
 
 }
 
 
 MYSQL_RES *      mysqlstub_use_result(MYSQL *mysql){
+	if(mysqlstub_use_result_ptr != NULL)
+		return (*mysqlstub_use_result_ptr)(mysql);
+	abort();
 
 }
 
@@ -644,6 +570,9 @@ MYSQL_RES *      mysqlstub_use_result(MYSQL *mysql){
 
 void         mysqlstub_get_character_set_info(MYSQL *mysql,
 		MY_CHARSET_INFO *charset){
+	if(mysqlstub_get_character_set_info_ptr!= NULL)
+		return (*mysqlstub_get_character_set_info_ptr)(mysql,charset);
+	abort();
 
 }
 
@@ -655,22 +584,34 @@ void         mysqlstub_get_character_set_info(MYSQL *mysql,
 int		 mysqlstub_shutdown(MYSQL *mysql,
 		enum mysql_enum_shutdown_level
 		shutdown_level){
+	if(mysqlstub_shutdown_ptr!= NULL)
+		return (*mysqlstub_shutdown_ptr)(mysql,shutdown_level);
+	abort();
 
 }
 
 
 int		 mysqlstub_dump_debug_info(MYSQL *mysql){
+	if(mysqlstub_dump_debug_info_ptr != NULL)
+		return (*mysqlstub_dump_debug_info)(mysql);
+	abort();
 
 }
 
 
 int		 mysqlstub_refresh(MYSQL *mysql,
 		unsigned int refresh_options){
+	if(mysqlstub_refresh_ptr != NULL)
+		return (*mysqlstub_refresh_ptr)(mysql,refresh_options);
+	abort();
 
 }
 
 
 int		 mysqlstub_kill(MYSQL *mysql,unsigned long pid){
+	if(mysqlstub_kill_ptr != NULL)
+		return (*mysqlstub_kill_ptr)(mysql,pid);
+	abort();
 
 }
 
@@ -678,151 +619,221 @@ int		 mysqlstub_kill(MYSQL *mysql,unsigned long pid){
 int		 mysqlstub_set_server_option(MYSQL *mysql,
 		enum enum_mysql_set_option
 		option){
+	if(mysqlstub_set_server_option_ptr != NULL)
+		return (*mysqlstub_set_server_option_ptr)(mysql,option);
+	abort();
 
 }
 
 
 int		 mysqlstub_ping(MYSQL *mysql){
+	if(mysqlstub_ping_ptr != NULL)
+		return (*mysqlstub_ping_ptr)(mysql);
+	abort();
 
 }
 
 
 const char *	 mysqlstub_stat(MYSQL *mysql){
+	if(mysqlstub_stat_ptr!= NULL)
+		return (*mysqlstub_stat_ptr)(mysql);
+	abort();
 
 }
 
 
 const char *	 mysqlstub_get_server_info(MYSQL *mysql){
+	if(mysqlstub_get_server_info_ptr!= NULL)
+		return (*mysqlstub_get_server_info_ptr)(mysql);
+	abort();
 
 }
 
 
 const char *	 mysqlstub_get_client_info(void){
+	if(mysqlstub_get_client_info_ptr != NULL)
+		return (*mysqlstub_get_client_info_ptr)();
+	abort();
 
 }
 
 
 unsigned long	 mysqlstub_get_client_version(void){
+	if(mysqlstub_get_client_version_ptr != NULL)
+		return (*mysqlstub_get_client_version_ptr)();
+	abort();
 
 }
 
 
 const char *	 mysqlstub_get_host_info(MYSQL *mysql){
+	if(mysqlstub_get_host_info_ptr!= NULL)
+		return (*mysqlstub_get_host_info_ptr)(mysql);
+	abort();
 
 }
 
 
 unsigned long	 mysqlstub_get_server_version(MYSQL *mysql){
+	if(mysqlstub_get_server_version_ptr!= NULL)
+		return (*mysqlstub_get_server_version_ptr)(mysql);
+	abort();
 
 }
 
 
 unsigned int	 mysqlstub_get_proto_info(MYSQL *mysql){
+	if(mysqlstub_get_proto_info_ptr!= NULL)
+		return (*mysqlstub_get_proto_info_ptr)(mysql);
+	abort();
 
 }
 
 
 MYSQL_RES *	 mysqlstub_list_dbs(MYSQL *mysql,const char *wild){
+	if(mysqlstub_list_dbs_ptr!= NULL)
+		return (*mysqlstub_list_dbs_ptr)(mysql,wild);
+	abort();
 
 }
 
 
 MYSQL_RES *	 mysqlstub_list_tables(MYSQL *mysql,const char *wild){
+	if(mysqlstub_list_tables_ptr!= NULL)
+		return (*mysqlstub_list_tables_ptr)(mysql,wild);
+	abort();
 
 }
 
 
 MYSQL_RES *	 mysqlstub_list_processes(MYSQL *mysql){
+	if(mysqlstub_list_processes_ptr != NULL)
+		return (*mysqlstub_list_processes_ptr)(mysql);
+	abort();
 
 }
 
 
 int		 mysqlstub_options(MYSQL *mysql,enum mysql_option option,
 		const void *arg){
+	if(mysqlstub_options_ptr != NULL)
+		return (*mysqlstub_options_ptr)(mysql,option,arg);
+	abort();
 
 }
 
 
 void		 mysqlstub_free_result(MYSQL_RES *result){
+	if(mysqlstub_free_result_ptr != NULL)
+		return (*mysqlstub_free_result_ptr)(result);
+	abort();
 
 }
 
 
 void		 mysqlstub_data_seek(MYSQL_RES *result,
 		my_ulonglong offset){
-
+	if(mysqlstub_data_seek_ptr!= NULL)
+		return (*mysqlstub_data_seek_ptr)(result,offset);
+	abort();
 }
 
 
 MYSQL_ROW_OFFSET  mysqlstub_row_seek(MYSQL_RES *result,
 		MYSQL_ROW_OFFSET offset){
-
+	if(mysqlstub_row_seek_ptr != NULL)
+		return (*mysqlstub_row_seek_ptr)(result,offset);
+	abort();
 }
 
 
 MYSQL_FIELD_OFFSET  mysqlstub_field_seek(MYSQL_RES *result,
 		MYSQL_FIELD_OFFSET offset){
-
+	if(mysqlstub_field_seek_ptr!= NULL)
+		return (*mysqlstub_field_seek_ptr)(result,offset);
+	abort();
 }
 
 
 MYSQL_ROW	 mysqlstub_fetch_row(MYSQL_RES *result){
-
+	if(mysqlstub_fetch_row != NULL)
+		return (*mysqlstub_fetch_row_ptr)(result);
+	abort();
 }
 
 
 unsigned long *  mysqlstub_fetch_lengths(MYSQL_RES *result){
-
+	if(mysqlstub_fetch_lengths_ptr != NULL)
+		return (*mysqlstub_fetch_lengths_ptr)(result);
+	abort();
 }
 
 
 MYSQL_FIELD *	 mysqlstub_fetch_field(MYSQL_RES *result){
-
+	if(mysqlstub_fetch_field_ptr != NULL)
+		return (*mysqlstub_fetch_field_ptr)(result);
+	abort();
 }
 
 
 MYSQL_RES *      mysqlstub_list_fields(MYSQL *mysql, const char *table,
 		const char *wild){
-
+	if(mysqlstub_fetch_fields_ptr!= NULL)
+		return (*mysqlstub_list_fields_ptr)(mysql,table,wild);
+	abort();
 }
 
 
 unsigned long	 mysqlstub_escape_string(char *to,const char *from,
 		unsigned long from_length){
-
+	if(mysqlstub_escape_string_ptr != NULL)
+		return (*mysqlstub_escape_string_ptr)(to,from,from_length);
+	abort();
 }
 
 
 unsigned long	 mysqlstub_hex_string(char *to,const char *from,
 		unsigned long from_length){
-
+	if(mysqlstub_hex_string_ptr != NULL)
+		return (*mysqlstub_hex_string_ptr)(to,from,from_length);
+	abort();
 }
 
 
 unsigned long  mysqlstub_real_escape_string(MYSQL *mysql,
 		char *to,const char *from,
 		unsigned long length){
-
+	if(mysqlstub_real_escape_string_ptr != NULL)
+		return (*mysqlstub_real_escape_string_ptr)(mysql,to,from,length);
+	abort();
 }
 
 
 void		 mysqlstub_debug(const char *debug){
-
+	if(mysqlstub_debug_ptr!= NULL)
+		return (*mysqlstub_debug_ptr)(debug);
+	abort();
 }
 
 
 unsigned int	 mysqlstub_thread_safe(void){
-
+	if(mysqlstub_thread_safe_ptr!= NULL)
+		return (*mysqlstub_thread_safe_ptr)();
+	abort();
 }
 
 
 my_bool		 mysqlstub_embedded(void){
-
+	if(mysqlstub_embedded_ptr!= NULL)
+		return (*mysqlstub_embedded_ptr)();
+	abort();
 }
 
 
 my_bool          mysqlstub_read_query_result(MYSQL *mysql){
-
+	if(mysqlstub_read_query_result_ptr!= NULL)
+		return (*mysqlstub_read_query_result_ptr)(mysql);
+	abort();
 }
 
 

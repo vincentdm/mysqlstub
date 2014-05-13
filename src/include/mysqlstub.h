@@ -3,6 +3,7 @@
 
 #include <mysql/mysql.h>
 
+const char * mysqlstub_get_stub_version();
 
 int mysqlstub_init_stub();
 int mysqlstub_end_stub();
