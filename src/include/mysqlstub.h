@@ -2,7 +2,9 @@
 #define libmysqlstub_h
 
 #include <mysql/mysql.h>
-
+#ifdef	__cplusplus
+extern "C" {
+#endif
 const char * mysqlstub_get_stub_version();
 
 int mysqlstub_init_stub();
@@ -157,6 +159,7 @@ my_bool  mysqlstub_stmt_send_long_data(MYSQL_STMT *stmt,
                                           const char *data,
                                           unsigned long length);
 MYSQL_RES * mysqlstub_stmt_result_metadata(MYSQL_STMT *stmt);
+
 MYSQL_RES * mysqlstub_stmt_param_metadata(MYSQL_STMT *stmt);
 unsigned int  mysqlstub_stmt_errno(MYSQL_STMT * stmt);
 const char * mysqlstub_stmt_error(MYSQL_STMT * stmt);
@@ -180,10 +183,7 @@ void  mysqlstub_close(MYSQL *sock);
 
 
 
-/**
- * function pointers
- */
-
-
-
+#ifdef	__cplusplus
+}/* extern "C"*/
+#endif
 #endif

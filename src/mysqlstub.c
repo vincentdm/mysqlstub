@@ -107,6 +107,7 @@ static mysqlstub_stmt_close_t * mysqlstub_stmt_close_ptr = NULL;
 static mysqlstub_stmt_reset_t * mysqlstub_stmt_reset_ptr = NULL;
 static mysqlstub_stmt_free_result_t * mysqlstub_stmt_free_result_ptr = NULL;
 static mysqlstub_stmt_send_long_data_t * mysqlstub_stmt_send_long_data_ptr = NULL;
+static mysqlstub_stmt_param_metadata_t * mysqlstub_stmt_result_metadata_ptr = NULL;
 static mysqlstub_stmt_param_metadata_t * mysqlstub_stmt_param_metadata_ptr = NULL;
 static mysqlstub_stmt_errno_t * mysqlstub_stmt_errno_ptr = NULL;
 static mysqlstub_stmt_error_t * mysqlstub_stmt_error_ptr = NULL;
@@ -240,6 +241,7 @@ int mysqlstub_init_stub() {
 			mysqlstub_stmt_reset_ptr = lt_dlsym(module,"mysql_stmt_reset");
 			mysqlstub_stmt_free_result_ptr = lt_dlsym(module,"mysql_stmt_free_result");
 			mysqlstub_stmt_send_long_data_ptr = lt_dlsym(module,"mysql_stmt_send_long_data");
+			mysqlstub_stmt_result_metadata_ptr = lt_dlsym(module,"mysql_stmt_result_metadata");
 			mysqlstub_stmt_param_metadata_ptr = lt_dlsym(module,"mysql_stmt_param_metadata");
 			mysqlstub_stmt_errno_ptr = lt_dlsym(module,"mysql_stmt_errno");
 			mysqlstub_stmt_error_ptr = lt_dlsym(module,"mysql_stmt_error");
@@ -840,79 +842,110 @@ my_bool          mysqlstub_read_query_result(MYSQL *mysql){
 
 
 MYSQL_STMT *  mysqlstub_stmt_init(MYSQL *mysql){
+	if(mysqlstub_stmt_init_ptr!= NULL)
+		return (*mysqlstub_stmt_init_ptr)(mysql);
+	abort();
 
 }
 
 
 int  mysqlstub_stmt_prepare(MYSQL_STMT *stmt, const char *query,
 		unsigned long length){
+	if(mysqlstub_stmt_prepare_ptr!= NULL)
+		return (*mysqlstub_stmt_prepare_ptr)(stmt,query,length);
+	abort();
 
 }
 
 
 int  mysqlstub_stmt_execute(MYSQL_STMT *stmt){
+	if(mysqlstub_stmt_execute_ptr!= NULL)
+		return (*mysqlstub_stmt_execute_ptr)(stmt);
+	abort();
 
 }
 
 
 int  mysqlstub_stmt_fetch(MYSQL_STMT *stmt){
-
+	if(mysqlstub_stmt_fetch_ptr!= NULL)
+		return (*mysqlstub_stmt_fetch_ptr)(stmt);
+	abort();
 }
 
 
 int  mysqlstub_stmt_fetch_column(MYSQL_STMT *stmt, MYSQL_BIND *bind_arg,
 		unsigned int column,
 		unsigned long offset){
-
+	if(mysqlstub_stmt_fetch_column_ptr!= NULL)
+		return (*mysqlstub_stmt_fetch_column_ptr)(stmt,bind_arg,column,offset);
+	abort();
 }
 
 
 int  mysqlstub_stmt_store_result(MYSQL_STMT *stmt){
-
+	if(mysqlstub_stmt_store_result_ptr!= NULL)
+		return (*mysqlstub_stmt_store_result_ptr)(stmt);
+	abort();
 }
 
 
 unsigned long  mysqlstub_stmt_param_count(MYSQL_STMT * stmt){
-
+	if(mysqlstub_stmt_param_count_ptr!= NULL)
+		return (*mysqlstub_stmt_param_count_ptr)(stmt);
+	abort();
 }
 
 
 my_bool  mysqlstub_stmt_attr_set(MYSQL_STMT *stmt,
 		enum enum_stmt_attr_type attr_type,
 		const void *attr){
-
+	if(mysqlstub_stmt_attr_set_ptr!= NULL)
+		return (*mysqlstub_stmt_attr_set_ptr)(stmt,attr_type,attr);
+	abort();
 }
 
 
 my_bool  mysqlstub_stmt_attr_get(MYSQL_STMT *stmt,
 		enum enum_stmt_attr_type attr_type,
 		void *attr){
-
+	if(mysqlstub_stmt_attr_get_ptr!= NULL)
+		return (*mysqlstub_stmt_attr_get_ptr)(stmt,attr_type,attr);
+	abort();
 }
 
 
 my_bool  mysqlstub_stmt_bind_param(MYSQL_STMT * stmt, MYSQL_BIND * bnd){
-
+	if(mysqlstub_stmt_bind_param_ptr!= NULL)
+		return (*mysqlstub_stmt_bind_param_ptr)(stmt,bnd);
+	abort();
 }
 
 
 my_bool  mysqlstub_stmt_bind_result(MYSQL_STMT * stmt, MYSQL_BIND * bnd){
-
+	if(mysqlstub_stmt_bind_result_ptr!= NULL)
+		return (*mysqlstub_stmt_bind_result_ptr)(stmt,bnd);
+	abort();
 }
 
 
 my_bool  mysqlstub_stmt_close(MYSQL_STMT * stmt){
-
+	if(mysqlstub_stmt_close_ptr!= NULL)
+		return (*mysqlstub_stmt_close_ptr)(stmt);
+	abort();
 }
 
 
 my_bool  mysqlstub_stmt_reset(MYSQL_STMT * stmt){
-
+	if(mysqlstub_stmt_reset_ptr!= NULL)
+		return (*mysqlstub_stmt_reset_ptr)(stmt);
+	abort();
 }
 
 
 my_bool  mysqlstub_stmt_free_result(MYSQL_STMT *stmt){
-
+	if(mysqlstub_stmt_free_result_ptr!= NULL)
+		return (*mysqlstub_stmt_free_result_ptr)(stmt);
+	abort();
 }
 
 
@@ -920,104 +953,157 @@ my_bool  mysqlstub_stmt_send_long_data(MYSQL_STMT *stmt,
 		unsigned int param_number,
 		const char *data,
 		unsigned long length){
-
+	if(mysqlstub_stmt_send_long_data_ptr!= NULL)
+		return (*mysqlstub_stmt_send_long_data_ptr)(stmt,param_number,data,length);
+	abort();
 }
+
 
 
 MYSQL_RES * mysqlstub_stmt_result_metadata(MYSQL_STMT *stmt){
+	if(mysqlstub_stmt_result_metadata_ptr!= NULL)
+		return (*mysqlstub_stmt_result_metadata_ptr)(stmt);
+	abort();
 
 }
 
-
 MYSQL_RES * mysqlstub_stmt_param_metadata(MYSQL_STMT *stmt){
+	if(mysqlstub_stmt_param_metadata_ptr!= NULL)
+		return (*mysqlstub_stmt_param_metadata_ptr)(stmt);
+	abort();
 
 }
 
 
 unsigned int  mysqlstub_stmt_errno(MYSQL_STMT * stmt){
+	if(mysqlstub_stmt_errno_ptr!= NULL)
+		return (*mysqlstub_stmt_errno_ptr)(stmt);
+	abort();
 
 }
 
 
 const char * mysqlstub_stmt_error(MYSQL_STMT * stmt){
+	if(mysqlstub_stmt_error_ptr!= NULL)
+		return (*mysqlstub_stmt_error_ptr)(stmt);
+	abort();
 
 }
 
 
 const char * mysqlstub_stmt_sqlstate(MYSQL_STMT * stmt){
+	if(mysqlstub_stmt_sqlstate_ptr!= NULL)
+		return (*mysqlstub_stmt_sqlstate_ptr)(stmt);
+	abort();
 
 }
 
 
 MYSQL_ROW_OFFSET  mysqlstub_stmt_row_seek(MYSQL_STMT *stmt,
 		MYSQL_ROW_OFFSET offset){
+	if(mysqlstub_stmt_row_seek_ptr!= NULL)
+		return (*mysqlstub_stmt_row_seek_ptr)(stmt,offset);
+	abort();
 
 }
 
 
 MYSQL_ROW_OFFSET  mysqlstub_stmt_row_tell(MYSQL_STMT *stmt){
+	if(mysqlstub_stmt_row_tell_ptr!= NULL)
+		return (*mysqlstub_stmt_row_tell_ptr)(stmt);
+	abort();
 
 }
 
 
 void  mysqlstub_stmt_data_seek(MYSQL_STMT *stmt, my_ulonglong offset){
+	if(mysqlstub_stmt_data_seek_ptr!= NULL)
+		return (*mysqlstub_stmt_data_seek_ptr)(stmt,offset);
+	abort();
 
 }
 
 
 my_ulonglong  mysqlstub_stmt_num_rows(MYSQL_STMT *stmt){
+	if(mysqlstub_stmt_num_rows_ptr!= NULL)
+		return (*mysqlstub_stmt_num_rows_ptr)(stmt);
+	abort();
 
 }
 
 
 my_ulonglong  mysqlstub_stmt_affected_rows(MYSQL_STMT *stmt){
+	if(mysqlstub_stmt_affected_rows_ptr!= NULL)
+		return (*mysqlstub_stmt_affected_rows_ptr)(stmt);
+	abort();
 
 }
 
 
 my_ulonglong  mysqlstub_stmt_insert_id(MYSQL_STMT *stmt){
+	if(mysqlstub_stmt_insert_id_ptr!= NULL)
+		return (*mysqlstub_stmt_insert_id_ptr)(stmt);
+	abort();
 
 }
 
 
 unsigned int  mysqlstub_stmt_field_count(MYSQL_STMT *stmt){
+	if(mysqlstub_stmt_field_count_ptr!= NULL)
+		return (*mysqlstub_stmt_field_count_ptr)(stmt);
+	abort();
 
 }
 
 
 
 my_bool  mysqlstub_commit(MYSQL * mysql){
+	if(mysqlstub_commit_ptr!= NULL)
+		return (*mysqlstub_commit_ptr)(mysql);
+	abort();
 
 }
 
 
 my_bool  mysqlstub_rollback(MYSQL * mysql){
-
+	if(mysqlstub_rollback_ptr!= NULL)
+		return (*mysqlstub_rollback_ptr)(mysql);
+	abort();
 }
 
 
 my_bool  mysqlstub_autocommit(MYSQL * mysql, my_bool auto_mode){
-
+	if(mysqlstub_autocommit_ptr!= NULL)
+		return (*mysqlstub_autocommit_ptr)(mysql,auto_mode);
+	abort();
 }
 
 
 my_bool  mysqlstub_more_results(MYSQL *mysql){
-
+	if(mysqlstub_more_results_ptr!= NULL)
+		return (*mysqlstub_more_results_ptr)(mysql);
+	abort();
 }
 
 
 int  mysqlstub_next_result(MYSQL *mysql){
-
+	if(mysqlstub_next_result_ptr!= NULL)
+		return (*mysqlstub_next_result_ptr)(mysql);
+	abort();
 }
 
 
 int  mysqlstub_stmt_next_result(MYSQL_STMT *stmt){
-
+	if(mysqlstub_stmt_next_result_ptr!= NULL)
+		return (*mysqlstub_stmt_next_result_ptr)(stmt);
+	abort();
 }
 
 
 void  mysqlstub_close(MYSQL *sock){
-
+	if(mysqlstub_close_ptr!= NULL)
+		return (*mysqlstub_close_ptr)(sock);
+	abort();
 }
 
 
