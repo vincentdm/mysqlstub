@@ -1,0 +1,28 @@
+libmysqlstub
+============
+A dynamic loader for libmysqlclient
+
+
+Introduction
+------------
+libmysqlstub is a convenience library which provides an interface to 
+libmysqlclient, independent of the version of libmysql.
+
+It uses ltdl to open libmysqlclient.so.
+
+Building libmysqlstub
+---------------------
+
+libtoolize
+aclocal
+automake --add-missing --gnu
+autoconf
+./configure 
+make
+
+Features for the future
+-----------------------
+Crossplatform support
+  * Windows
+  * MacOS 
+

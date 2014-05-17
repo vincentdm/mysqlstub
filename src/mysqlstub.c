@@ -130,11 +130,11 @@ static mysqlstub_close_t * mysqlstub_close_ptr = NULL;
 
 
 static _mysqlstub_warning(const char * str) {
-	fprintf(stderr,"mysqlstub: WARNING: %s",str);
+	fprintf(stderr,"%s: WARNING: %s",PACKAGE_NAME,str);
 }
 
 static _mysqlstub_error(const char * str) {
-	fprintf(stderr,"mysqlstub: ERROR: %s",str);
+	fprintf(stderr,"%s: ERROR: %s",PACKAGE_NAME,str);
 }
 
 int mysqlstub_init_stub() {

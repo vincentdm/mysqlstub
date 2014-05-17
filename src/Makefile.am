@@ -8,6 +8,6 @@ AM_CFLAGS=
 
 libmysqlstub_la_SOURCES=mysqlstub.c
 
-libmysqlstub_la_LDFLAGS=$(LIBLTDL)
+libmysqlstub_la_LDFLAGS=$(LIBLTDL) -version-info=${LIBVERSION}
 
 libmysqlstub_la_LIBADD=
